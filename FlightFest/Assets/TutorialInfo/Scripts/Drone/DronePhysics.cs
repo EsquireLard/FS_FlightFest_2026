@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class DronePhysics : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class DronePhysics : MonoBehaviour
     Vector3 InertiaMatrix;
     Vector3 InertiaMAtrixInverse;
     float frameWidth; //Frame is a square
-    double sqrt2;
+    float sqrt2;
+    DroneState currentState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,12 +33,20 @@ public class DronePhysics : MonoBehaviour
             1 / InertiaMatrix.y,
             1 / InertiaMatrix.z
         );
+        currentState = new DroneState //TODO figure out how to set the initial state
+        {
+            position = Vector3.zero,
+            orientation = Quaternion.identity,
+            velocity = Vector3.zero,
+            angularVelocity = Vector3.zero
+        };
     }
 
     // Update is called once per frame
     void Update()
     {
-        DroneState state = RK4(ComputeDynamics, Time.deltaTime, ref state, controlInput);
+        Vector4 controlInput = Vector4.zero; //TODO figure out how to get the control input from the controller
+        currentState = FRK4(ComputeDynamics, Time.deltaTime, currentState, controlInput); //TODO figure out control input and state management
     }
 
     DroneState ComputeDynamics(DroneState state, Vector4 controlInput) //TODO pre calc torque and c before this cause is the same in every runge kutta step
@@ -60,7 +70,7 @@ public class DronePhysics : MonoBehaviour
                 0.5f * (-state.angularVelocity.x * state.orientation.x - state.angularVelocity.y * state.orientation.y - state.angularVelocity.z * state.orientation.z)
             ).normalized,
 
-            angularVelocity = Vector3.Scale(InertiaMAtrixInverse, Vector3.Scale(Vector3.Cross(torque, state.angularVelocity), 1 / InertiaMatrix))
+            angularVelocity = Vector3.Scale(InertiaMAtrixInverse, torque - Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity))) // Since the inertia matrix is diagonal, the matrix–vector multiplication reduces to element-wise scaling of the vector components.
         };
 
         return derivative;
