@@ -34,7 +34,7 @@ public class Objective : MonoBehaviour
 
         currentTime = Mathf.Clamp(currentTime, 0.0f, objectiveTime);
 
-        GameManager.instance.objectiveSlider.value = currentTime / objectiveTime;
+        GameManager.instance.UpdateObjective(currentTime, objectiveTime);
     }
 
     private void OnTriggerEnter(Collider other)

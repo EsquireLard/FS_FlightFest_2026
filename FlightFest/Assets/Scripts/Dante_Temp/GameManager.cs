@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -18,7 +20,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
 
-    [SerializeField] public Slider objectiveSlider;
+    [Header("===Displayed Text===")]
+    [SerializeField] TMP_Text currentObjectiveTime;
+    [SerializeField] Slider objectiveSlider;
 
 
     void Awake()
@@ -44,7 +48,7 @@ public class GameManager : MonoBehaviour
         {
             if (menuActive == null)
             {
-                statePause();
+                StatePause();
                 menuActive = menuPause;
                 menuActive.SetActive(true);
             }
@@ -56,20 +60,20 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                stateUnpause();
+                StateUnpause();
             }
         }
     }
 
     // ---- PAUSING ---- //
-    public void statePause()
+    public void StatePause()
     {
         isPaused = true;
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
-    public void stateUnpause()
+    public void StateUnpause()
     {
         isPaused = false;
         Time.timeScale = timeScaleOrig;
@@ -80,17 +84,26 @@ public class GameManager : MonoBehaviour
     }
 
     // ---- WIN CONDITION FEEDBACK ---- //
-    public void youLose()
+    public void YouLose()
     {
-        statePause();
+        StatePause();
         menuActive = menuLose;
         menuActive.SetActive(true);
     }
 
-    public void youWin()
+    public void YouWin()
     {
-        statePause();
+        StatePause();
         menuActive = menuWin;
         menuActive.SetActive(true);
+    }
+
+    public void UpdateObjective(float currTime, float objectiveTime)
+    {
+        int intObjTime = (int)currTime + 1;
+        if (intObjTime == (int)objectiveTime + 1) intObjTime = (int)objectiveTime;
+        if (currTime == 0.0f) intObjTime = 0;
+        currentObjectiveTime.text = intObjTime.ToString();
+        objectiveSlider.value = currTime / objectiveTime;
     }
 }
