@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7003525139152526008}
   - component: {fileID: 3644611458919814570}
   - component: {fileID: 3769330377373693866}
-  - component: {fileID: 8673953023563730546}
   - component: {fileID: 3576083365705740966}
   m_Layer: 0
   m_Name: ObjectiveMarker
@@ -114,18 +113,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8673953023563730546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2544226023865870790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d2c7fd607a80f24c88f2f4aaa639cdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Obejective
 --- !u!114 &3576083365705740966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,3 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2c7fd607a80f24c88f2f4aaa639cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objective
+  objectiveTime: 3

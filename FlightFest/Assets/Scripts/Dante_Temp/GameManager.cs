@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<Temp_PlayerDroneController>();
+        //objectiveSlider.value = 0.1f;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

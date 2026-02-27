@@ -900,6 +900,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ObjectiveMarker
       objectReference: {fileID: 0}
+    - target: {fileID: 3576083365705740966, guid: 58de7e6d1d642a242b6dc8f38e60d962, type: 3}
+      propertyPath: objectiveTime
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8734374456877368802, guid: 58de7e6d1d642a242b6dc8f38e60d962, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

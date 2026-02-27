@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour
 {
+    [SerializeField] float objectiveTime;
+    float currentTime;
+
     bool playerInRange;
 
     void Awake()
@@ -12,7 +15,7 @@ public class Objective : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        currentTime = 0.0f;
     }
 
     // Update is called once per frame
@@ -20,14 +23,18 @@ public class Objective : MonoBehaviour
     {
         if (playerInRange)
         {
-            GameManager.instance.objectiveSlider.value = (float)GameManager.instance.objectiveSlider.value + 1f * Time.deltaTime;
+            currentTime += Time.deltaTime;
             Debug.Log("IN RANGE");
         }
         else
         {
-            GameManager.instance.objectiveSlider.value = (float)GameManager.instance.objectiveSlider.value - 1f * Time.deltaTime;
+            currentTime -= Time.deltaTime;
             Debug.Log("OUT RANGE");
         }
+
+        currentTime = Mathf.Clamp(currentTime, 0.0f, objectiveTime);
+
+        GameManager.instance.objectiveSlider.value = currentTime / objectiveTime;
     }
 
     private void OnTriggerEnter(Collider other)
