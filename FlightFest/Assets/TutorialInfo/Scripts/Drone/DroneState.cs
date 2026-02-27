@@ -29,6 +29,16 @@ public struct DroneState
 
     public static DroneState operator *(DroneState a, float scalar)
     {
+        return Multiply(a, scalar);
+    }
+
+    public static DroneState operator *(float scalar, DroneState a)
+    {
+        return Multiply(a, scalar);
+    }
+
+    static DroneState Multiply(DroneState a, float scalar)
+    {
         return new DroneState
         {
             position = a.position * scalar,

@@ -46,7 +46,8 @@ public class DronePhysics : MonoBehaviour
     void Update()
     {
         Vector4 controlInput = Vector4.zero; //TODO figure out how to get the control input from the controller
-        currentState = FRK4(ComputeDynamics, Time.deltaTime, currentState, controlInput); //TODO figure out control input and state management
+        currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, controlInput); //TODO figure out control input and state management
+                                                                                              //TODO figure out why ref      
     }
 
     DroneState ComputeDynamics(DroneState state, Vector4 controlInput) //TODO pre calc torque and c before this cause is the same in every runge kutta step
@@ -83,7 +84,7 @@ public class DronePhysics : MonoBehaviour
         DroneState k3 = func(state + k2 * (dt / 2), controlInput);
         DroneState k4 = func(state + k3 * dt, controlInput);
 
-        state += (k1 + 2 * k2 + 2 * k3 + k4) * (dt / 6);
+        state += (k1 + 2.0f * k2 + 2.0f * k3 + k4) * (dt / 6.0f);
         state.orientation = state.orientation.normalized; // Normalize the quaternion to prevent drift
         return state;
     }
