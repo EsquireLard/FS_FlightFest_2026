@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("===Displayed Text===")]
     [SerializeField] TMP_Text currentObjectiveTime;
     [SerializeField] Slider objectiveSlider;
+    [SerializeField] TextPopup popWindow;
 
 
     void Awake()
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -57,6 +58,10 @@ public class GameManager : MonoBehaviour
                 menuActive.SetActive(false);
                 menuActive = menuPause;
                 menuActive.SetActive(true);
+            }
+            else if (menuActive == popWindow.gameObject)
+            {
+                PopupConfirm();
             }
             else
             {
@@ -101,9 +106,24 @@ public class GameManager : MonoBehaviour
     public void UpdateObjective(float currTime, float objectiveTime)
     {
         int intObjTime = (int)currTime + 1;
-        if (intObjTime == (int)objectiveTime + 1) intObjTime = (int)objectiveTime;
+        if (intObjTime > (int)objectiveTime) intObjTime = (int)objectiveTime;
         if (currTime == 0.0f) intObjTime = 0;
         currentObjectiveTime.text = intObjTime.ToString();
         objectiveSlider.value = currTime / objectiveTime;
+    }
+
+    public void ShowPopup(string textMessage)
+    {
+        menuActive = popWindow.gameObject;
+        popWindow.gameObject.SetActive(true);
+        popWindow.confirmButton.onClick.AddListener(PopupConfirm);
+        popWindow.text.SetText(textMessage);
+        StatePause();
+    }
+
+    public void PopupConfirm()
+    {
+        popWindow.gameObject.SetActive(false);
+        StateUnpause();
     }
 }
