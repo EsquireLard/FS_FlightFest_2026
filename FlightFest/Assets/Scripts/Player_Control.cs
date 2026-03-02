@@ -3,6 +3,12 @@ using UnityEngine.InputSystem;
 
 public class Player_Control : MonoBehaviour
 {
+    Vector2 leftStick;
+    Vector2 rightStick;
+
+    [SerializeField]float rotateSpeed;
+    [SerializeField]float flySpeed;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -12,26 +18,12 @@ public class Player_Control : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
+        leftStick = new Vector2(Input.GetAxis("Yaw"), Input.GetAxis("Throttle"));
+        rightStick = new Vector2(Input.GetAxis("Roll"), Input.GetAxis("Pitch"));
 
-    void Input_Throttle(InputAction.CallbackContext context)
-    {
-        
-    }
-
-    void Input_Yaw(InputAction.CallbackContext context)
-    {
-
-    }
-
-    void Input_Pitch(InputAction.CallbackContext context)
-    {
-
-    }
-
-    void Input_Roll(InputAction.CallbackContext context)
-    {
-
+        transform.Rotate(Vector3.left, rightStick.y * rotateSpeed);
+        transform.Rotate(Vector3.back, rightStick.x * rotateSpeed);
+        transform.Rotate(Vector3.up, leftStick.x * rotateSpeed);
+        transform.Translate(Vector3.up * (leftStick.y + 1) * flySpeed, Space.Self);
     }
 }
