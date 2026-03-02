@@ -59,15 +59,15 @@ public class FlightController : MonoBehaviour
         double pitchSetpoint = ComputeRate(pitch);
         double rollSetpoint = ComputeRate(roll);
 
-        PIDresult yawResult = PIDEquation(yawSetpoint, state.angularVelocity.y, cumulativeIYaw, prevErrorYaw);
+        PIDresult yawResult = PIDEquation(yawSetpoint, state.angularVelocity.y, cumulativeIYaw, prevErrorYaw, kPYaw, kIYaw, kDYaw);
         cumulativeIYaw = yawResult.cumulativeI;
         prevErrorYaw = yawResult.prevError;
 
-        PIDresult pitchResult = PIDEquation(pitchSetpoint, state.angularVelocity.x, cumulativeIPitch, prevErrorPitch);
+        PIDresult pitchResult = PIDEquation(pitchSetpoint, state.angularVelocity.x, cumulativeIPitch, prevErrorPitch, kPPitch, kIPitch, kDPitch);
         cumulativeIPitch = pitchResult.cumulativeI;
         prevErrorPitch = pitchResult.prevError;
 
-        PIDresult rollResult = PIDEquation(rollSetpoint, state.angularVelocity.z, cumulativeIRoll, prevErrorRoll);
+        PIDresult rollResult = PIDEquation(rollSetpoint, state.angularVelocity.z, cumulativeIRoll, prevErrorRoll, kPPitch, kIPitch, kDPitch);
         cumulativeIRoll = rollResult.cumulativeI;
         prevErrorRoll = rollResult.prevError;
     
@@ -82,10 +82,10 @@ public class FlightController : MonoBehaviour
 
     double ComputeRate(double rawInput) //TODO implement
     {
-        
+        return 0.0f;
     }
 
-    PIDresult PIDEquation(double setpoint, double measurement, double cumulativeI, double prevError)
+    PIDresult PIDEquation(double setpoint, double measurement, double cumulativeI, double prevError, double kP, double kI, double kD)
     {
         double error = setpoint - measurement;
         
@@ -128,4 +128,11 @@ struct PIDresult
     public double PID;
     public double cumulativeI;
     public double prevError;
+
+    public PIDresult(double PID, double cumulativeI, double prevError)
+    {
+        this.PID = PID;
+        this.cumulativeI = cumulativeI;
+        this.prevError = prevError;
+    }
 }
