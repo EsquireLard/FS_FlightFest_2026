@@ -3,6 +3,8 @@ using UnityEngine;
 public class Objective : MonoBehaviour
 {
     [SerializeField] float objectiveTime;
+    [SerializeField] string objectivePopup;
+    //[SerializeField] ObjectiveSpawner nextObjective;
     float currentTime;
 
     bool playerInRange;
@@ -16,6 +18,10 @@ public class Objective : MonoBehaviour
     void Start()
     {
         currentTime = 0.0f;
+        if (objectivePopup != "")
+        {
+            GameManager.instance.ShowPopup(objectivePopup);
+        }
     }
 
     // Update is called once per frame
@@ -24,12 +30,15 @@ public class Objective : MonoBehaviour
         if (playerInRange)
         {
             currentTime += Time.deltaTime;
-            Debug.Log("IN RANGE");
+            if (currentTime > objectiveTime)
+            {
+                GameManager.instance.UpdateObjective(0.0f, 0.0f);
+                FinishObjective();
+            }
         }
         else
         {
             currentTime -= Time.deltaTime;
-            Debug.Log("OUT RANGE");
         }
 
         currentTime = Mathf.Clamp(currentTime, 0.0f, objectiveTime);
@@ -51,5 +60,10 @@ public class Objective : MonoBehaviour
         {
             playerInRange = false;
         }
+    }
+
+    void FinishObjective()
+    {
+        GameObject.Destroy(gameObject);
     }
 }

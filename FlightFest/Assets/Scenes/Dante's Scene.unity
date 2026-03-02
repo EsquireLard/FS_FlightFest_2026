@@ -797,22 +797,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3283536400403663773, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
-      propertyPath: m_text
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3283536400403663773, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 56e889120f6e61a438d7dfedc99dcdf7, type: 2}
-    - target: {fileID: 3283536400403663773, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2180264, guid: 56e889120f6e61a438d7dfedc99dcdf7, type: 2}
-    - target: {fileID: 3283536400403663773, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4547590770920528231, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -822,26 +806,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4547590770920528231, guid: f4018c4f0c44df94e8fde6abd22017d4, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 946333773233952183, guid: c9d989e61ff9e7d49923f54e52d091e0, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 946333773233952183, guid: c9d989e61ff9e7d49923f54e52d091e0, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4547590770920528231, guid: c9d989e61ff9e7d49923f54e52d091e0, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4547590770920528231, guid: c9d989e61ff9e7d49923f54e52d091e0, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4547590770920528231, guid: c9d989e61ff9e7d49923f54e52d091e0, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
@@ -862,10 +826,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Temp_PlayerDrone
       objectReference: {fileID: 0}
-    - target: {fileID: 2744292787155167032, guid: 5616d110e7d75084ba2fc3f6607cab26, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 4978088575673514459, guid: 5616d110e7d75084ba2fc3f6607cab26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -906,10 +866,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5333990591829395513, guid: 5616d110e7d75084ba2fc3f6607cab26, type: 3}
-      propertyPath: speedMod
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -928,8 +884,8 @@ PrefabInstance:
       value: ObjectiveMarker
       objectReference: {fileID: 0}
     - target: {fileID: 3576083365705740966, guid: 981da026f380e644db3bde0ca283a611, type: 3}
-      propertyPath: objectiveTime
-      value: 2
+      propertyPath: objectivePopup
+      value: Test Test Test
       objectReference: {fileID: 0}
     - target: {fileID: 8734374456877368802, guid: 981da026f380e644db3bde0ca283a611, type: 3}
       propertyPath: m_LocalPosition.x
