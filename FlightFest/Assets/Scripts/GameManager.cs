@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public float timeScaleOrig;
 
     GameObject player;
-    Temp_PlayerDroneController playerScript;
+    Player_Control playerScript;
 
     [Header("===Menus===")]
     [SerializeField] GameObject menuActive;
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         timeScaleOrig = Time.timeScale;
 
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<Temp_PlayerDroneController>();
+        playerScript = player.GetComponent<Player_Control>();
         //objectiveSlider.value = 0.1f;
     }
 
@@ -114,16 +114,15 @@ public class GameManager : MonoBehaviour
 
     public void ShowPopup(string textMessage)
     {
+        StatePause();
         menuActive = popWindow.gameObject;
-        popWindow.gameObject.SetActive(true);
+        menuActive.SetActive(true);
         popWindow.confirmButton.onClick.AddListener(PopupConfirm);
         popWindow.text.SetText(textMessage);
-        StatePause();
     }
 
     public void PopupConfirm()
     {
-        popWindow.gameObject.SetActive(false);
         StateUnpause();
     }
 }

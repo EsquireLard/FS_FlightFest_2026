@@ -1864,7 +1864,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 'Confirm
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 56e889120f6e61a438d7dfedc99dcdf7, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 56e889120f6e61a438d7dfedc99dcdf7, type: 2}
