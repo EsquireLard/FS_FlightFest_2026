@@ -13,9 +13,15 @@ public class FlightController : MonoBehaviour
     double roll;
 
     //PID constants
-    double kP;
-    double kI;
-    double kD;
+    double kPPitch; // Same as Roll
+    double kPYaw;
+
+    double kIPitch; // Same as Roll
+    double kIYaw;
+    
+    double kDPitch; // Same as Roll
+    double kDYaw;
+    
 
     //PID cumulative error terms
     double cumulativeIPitch; 
@@ -34,7 +40,15 @@ public class FlightController : MonoBehaviour
 
     void Start()
     {
-        
+        //TODO we need to tune these constants
+        kPPitch = 0.6f;
+        kIPitch = 3.5f;
+        kDPitch = 0.03f;
+
+        kPYaw = 2.0f;
+        kIYaw = 12.0f;
+        kDYaw = 0.0f;
+
     }
 
     // Update is called once per frame
