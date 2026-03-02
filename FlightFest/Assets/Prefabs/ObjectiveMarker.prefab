@@ -126,3 +126,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objective
   objectiveTime: 2
+  objectivePopup: 
+  nextObjective: {fileID: 0}

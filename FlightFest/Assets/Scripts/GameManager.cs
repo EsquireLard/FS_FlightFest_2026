@@ -114,16 +114,15 @@ public class GameManager : MonoBehaviour
 
     public void ShowPopup(string textMessage)
     {
+        StatePause();
         menuActive = popWindow.gameObject;
-        popWindow.gameObject.SetActive(true);
+        menuActive.SetActive(true);
         popWindow.confirmButton.onClick.AddListener(PopupConfirm);
         popWindow.text.SetText(textMessage);
-        StatePause();
     }
 
     public void PopupConfirm()
     {
-        popWindow.gameObject.SetActive(false);
         StateUnpause();
     }
 }
