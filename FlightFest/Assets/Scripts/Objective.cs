@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour
 {
-    [SerializeField] float objectiveTime;
-    [SerializeField] string objectivePopup;
-    //[SerializeField] ObjectiveSpawner nextObjective;
+    [SerializeField] public float objectiveTime;
+    [SerializeField] public string objectivePopup;
+    [SerializeField] public ObjectiveSpawner nextObjective;
     float currentTime;
 
     bool playerInRange;
@@ -30,9 +30,9 @@ public class Objective : MonoBehaviour
         if (playerInRange)
         {
             currentTime += Time.deltaTime;
-            if (currentTime > objectiveTime)
+            if (currentTime >= objectiveTime)
             {
-                GameManager.instance.UpdateObjective(0.0f, 0.0f);
+                GameManager.instance.UpdateObjective(0.1f, 1.0f);
                 FinishObjective();
             }
         }
@@ -64,6 +64,10 @@ public class Objective : MonoBehaviour
 
     void FinishObjective()
     {
+        if (nextObjective != null)
+        {
+            nextObjective.SpawnObjective();
+        }
         GameObject.Destroy(gameObject);
     }
 }
