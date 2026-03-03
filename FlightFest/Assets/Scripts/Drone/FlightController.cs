@@ -1,9 +1,8 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FlightController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    
     DroneState state;
 
     // I think this is going to be a raw measurement of the input, and then we will apply the rate transformation
@@ -11,6 +10,10 @@ public class FlightController : MonoBehaviour
     double yaw;
     double pitch;
     double roll;
+
+    [SerializeField]float rotateSpeed;
+    [SerializeField]float flySpeed;
+
 
     //PID constants
     double kPPitch; // Same as Roll
@@ -54,6 +57,12 @@ public class FlightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        throttle = Input.GetAxis("Throttle");
+        yaw = Input.GetAxis("Yaw");
+        pitch = Input.GetAxis("Pitch");
+        roll = Input.GetAxis("Roll");
+        Debug.Log("Throttle" + throttle + " Yaw" + yaw  + " Pitch" + pitch + " Roll" + roll);
+
         double throttleSetpoint = ComputeRate(throttle);
         double yawSetpoint = ComputeRate(yaw);
         double pitchSetpoint = ComputeRate(pitch);
