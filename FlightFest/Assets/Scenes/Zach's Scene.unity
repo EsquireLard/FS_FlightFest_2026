@@ -119,6 +119,25 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &859958584 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6857980903786841168, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
+  m_PrefabInstance: {fileID: 4542638037388411024}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &859958589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859958584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f84ea3f5ac850e4db49631873d867ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightController
+  rotateSpeed: 0
+  flySpeed: 0
 --- !u!1001 &1069221606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -576,10 +595,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4608896049641068323, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6857980903786841168, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 859958589}
   m_SourcePrefab: {fileID: 100100000, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -22,9 +22,9 @@ public class Player_Control : MonoBehaviour
         rightStick = new Vector2(Input.GetAxis("Roll"), Input.GetAxis("Pitch"));
 
         Debug.Log("Throttle" + leftStick.y + " Yaw" + leftStick.x  + " Pitch" + rightStick.y + " Roll" + rightStick.x);
-        transform.Rotate(Vector3.left, rightStick.y * rotateSpeed);
-        transform.Rotate(Vector3.back, rightStick.x * rotateSpeed);
-        transform.Rotate(Vector3.up, leftStick.x * rotateSpeed);
-        transform.Translate(Vector3.up * (leftStick.y + 1) * flySpeed, Space.Self);
+        // transform.Rotate(Vector3.left, rightStick.y * rotateSpeed);
+        // transform.Rotate(Vector3.back, rightStick.x * rotateSpeed);
+        // transform.Rotate(Vector3.up, leftStick.x * rotateSpeed);
+        // transform.Translate(Vector3.up * (leftStick.y + 1) * flySpeed, Space.Self);
     }
 }

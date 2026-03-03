@@ -6,43 +6,51 @@ public class FlightController : MonoBehaviour
     DroneState state;
 
     // I think this is going to be a raw measurement of the input, and then we will apply the rate transformation
-    double throttle;
-    double yaw;
-    double pitch;
-    double roll;
+    float throttle;
+    float yaw;
+    float pitch;
+    float roll;
 
-    [SerializeField]float rotateSpeed;
-    [SerializeField]float flySpeed;
+    [SerializeField] float rotateSpeed;
+    [SerializeField] float flySpeed;
 
 
     //PID constants
-    double kPPitch; // Same as Roll
-    double kPYaw;
+    float kPPitch; // Same as Roll
+    float kPYaw;
 
-    double kIPitch; // Same as Roll
-    double kIYaw;
-    
-    double kDPitch; // Same as Roll
-    double kDYaw;
-    
+    float kIPitch; // Same as Roll
+    float kIYaw;
+
+    float kDPitch; // Same as Roll
+    float kDYaw;
+
 
     //PID cumulative error terms
-    double cumulativeIPitch; 
-    double cumulativeIYaw;
-    double cumulativeIRoll;
+    float cumulativeIPitch;
+    float cumulativeIYaw;
+    float cumulativeIRoll;
 
-    double prevErrorPitch;
-    double prevErrorYaw;
-    double prevErrorRoll;
+    float prevErrorPitch;
+    float prevErrorYaw;
+    float prevErrorRoll;
 
-    //Rotor Thrusts
-    double f1;
-    double f2;
-    double f3;
-    double f4;
+    //Rates
+    float[] rcExpo;
+    float[] rcRates;
+    float[] rates;
+
+
+    //OutputRotor Thrusts
+    float f1;
+    float f2;
+    float f3;
+    float f4;
 
     void Start()
     {
+
+
         //TODO we need to tune these constants
         kPPitch = 0.6f;
         kIPitch = 3.5f;
@@ -52,6 +60,9 @@ public class FlightController : MonoBehaviour
         kIYaw = 12.0f;
         kDYaw = 0.0f;
 
+        rcExpo = new float[3]{0.1f, 0.1f, 0.1f}; 
+        rcRates = new float[3]{1.0f, 1.0f, 1.0f}; 
+        rates = new float[3]{0.7f, 0.7f,  0.7f}; 
     }
 
     // Update is called once per frame
@@ -61,12 +72,13 @@ public class FlightController : MonoBehaviour
         yaw = Input.GetAxis("Yaw");
         pitch = Input.GetAxis("Pitch");
         roll = Input.GetAxis("Roll");
-        Debug.Log("Throttle" + throttle + " Yaw" + yaw  + " Pitch" + pitch + " Roll" + roll);
+        Debug.Log("Raw: Throttle " + throttle + " Yaw " + yaw + " Pitch " + pitch + " Roll " + roll);
 
-        double throttleSetpoint = ComputeRate(throttle);
-        double yawSetpoint = ComputeRate(yaw);
-        double pitchSetpoint = ComputeRate(pitch);
-        double rollSetpoint = ComputeRate(roll);
+        float throttleSetpoint = throttle;
+        float yawSetpoint = ComputeBetaflightRates(0, yaw);
+        float pitchSetpoint = ComputeBetaflightRates(1, pitch);
+        float rollSetpoint = ComputeBetaflightRates(2, roll);
+        Debug.Log("Set: Throttle " + throttle + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
 
         PIDresult yawResult = PIDEquation(yawSetpoint, state.angularVelocity.y, cumulativeIYaw, prevErrorYaw, kPYaw, kIYaw, kDYaw);
         cumulativeIYaw = yawResult.cumulativeI;
@@ -79,7 +91,10 @@ public class FlightController : MonoBehaviour
         PIDresult rollResult = PIDEquation(rollSetpoint, state.angularVelocity.z, cumulativeIRoll, prevErrorRoll, kPPitch, kIPitch, kDPitch);
         cumulativeIRoll = rollResult.cumulativeI;
         prevErrorRoll = rollResult.prevError;
-    
+
+        
+        Debug.Log("PID: Yaw " + yawResult.PID + " Pitch " + pitchResult.PID + " Roll " + rollResult.PID);
+
         f1 = throttleSetpoint + pitchResult.PID - yawResult.PID - rollResult.PID;
         f2 = throttleSetpoint + pitchResult.PID + yawResult.PID + rollResult.PID;
         f3 = throttleSetpoint - pitchResult.PID - yawResult.PID + rollResult.PID;
@@ -89,56 +104,75 @@ public class FlightController : MonoBehaviour
 
     }
 
-    double ComputeRate(double rawInput) //TODO implement
+    float ComputeBetaflightRates(int axis, float input)
     {
-        return 0.0f;
+        float inputAbs = Mathf.Abs(input);
+
+        input = input * inputAbs * inputAbs * inputAbs * rcExpo[axis] + input * (1 - rcExpo[axis]);
+
+        float angleRate = 200.0f * rcRates[axis] * input;
+
+        float rcSuperfactor = 1.0f - (inputAbs * rates[axis]);
+
+        if(rcSuperfactor < 0.01f)
+        {
+            rcSuperfactor = 0.01f;
+        }else if(rcSuperfactor > 1.00f)
+        {
+            rcSuperfactor = 1.00f;
+        }
+
+        rcSuperfactor = 1.0f / rcSuperfactor;
+        angleRate *= rcSuperfactor;
+
+        return angleRate;
     }
 
-    PIDresult PIDEquation(double setpoint, double measurement, double cumulativeI, double prevError, double kP, double kI, double kD)
+    PIDresult PIDEquation(float setpoint, float measurement, float cumulativeI, float prevError, float kP, float kI, float kD)
     {
-        double error = setpoint - measurement;
-        
-        //Proportional term
-        double P = kP * error;
-        
-        //Integral term
-        double I = cumulativeI + kI * error; //TODO This is not correct, we need to integrate the error over time
+        float error = setpoint - measurement;
 
-        if(I > 400) //TODO This is a very arbitrary threshold, we need to tune this
+        //Proportional term
+        float P = kP * error;
+
+        //Integral term
+        float I = cumulativeI + kI * error; //TODO This is not correct, we need to integrate the error over time
+
+        if (I > 400) //TODO This is a very arbitrary threshold, we need to tune this
         {
-           I = 400;
+            I = 400;
         }
-        else if(I < -400)
+        else if (I < -400)
         {
             I = -400;
         }
 
         //Derivative term
 
-        double D = kD * (error - prevError); //TODO This is not correct, we need to divide by the time step
-    
-        double PID = P + I + D;
-        
-         if(PID > 400) //TODO This is a very arbitrary threshold, we need to tune this
+        float D = kD * (error - prevError); //TODO This is not correct, we need to divide by the time step
+
+        float PID = P + I + D;
+
+        if (PID > 400) //TODO This is a very arbitrary threshold, we need to tune this
         {
-           PID = 400;
+            PID = 400;
         }
-        else if(PID < -400)
+        else if (PID < -400)
         {
             PID = -400;
         }
 
         return new PIDresult(PID, I, error);
     }
-}   
+}
 
 struct PIDresult
 {
-    public double PID;
-    public double cumulativeI;
-    public double prevError;
+    public float PID;
+    public float cumulativeI;
+    public float prevError;
 
-    public PIDresult(double PID, double cumulativeI, double prevError)
+    public PIDresult(float PID, float cumulativeI, float prevError)
     {
         this.PID = PID;
         this.cumulativeI = cumulativeI;
