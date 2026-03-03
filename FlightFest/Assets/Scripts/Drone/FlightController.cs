@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class FlightController : MonoBehaviour
 {
     DroneState state;
+    private Controls controls;
 
     // I think this is going to be a raw measurement of the input, and then we will apply the rate transformation
     float throttle;
@@ -47,6 +48,12 @@ public class FlightController : MonoBehaviour
     float f3;
     float f4;
 
+    void Awake()
+    {
+        controls = new Controls();
+        controls.RCController.Enable();
+    }
+
     void Start()
     {
 
@@ -60,18 +67,21 @@ public class FlightController : MonoBehaviour
         kIYaw = 12.0f;
         kDYaw = 0.0f;
 
-        rcExpo = new float[3]{0.1f, 0.1f, 0.1f}; 
-        rcRates = new float[3]{1.0f, 1.0f, 1.0f}; 
-        rates = new float[3]{0.7f, 0.7f,  0.7f}; 
+        rcExpo = new float[3] { 0.1f, 0.1f, 0.1f };
+        rcRates = new float[3] { 1.0f, 1.0f, 1.0f };
+        rates = new float[3] { 0.7f, 0.7f, 0.7f };
     }
 
     // Update is called once per frame
     void Update()
     {
-        throttle = Input.GetAxis("Throttle");
-        yaw = Input.GetAxis("Yaw");
-        pitch = Input.GetAxis("Pitch");
-        roll = Input.GetAxis("Roll");
+        Debug.Log((controls == null) ? "controls is NULL" : "controls is OK");
+        Debug.Log((controls.RCController.Throttle == null) ? "Throttle is NULL" : "Throttle is OK");
+
+        throttle = controls.RCController.Throttle.ReadValue<float>();
+        yaw = controls.RCController.Yaw.ReadValue<float>();
+        pitch = controls.RCController.Pitch.ReadValue<float>();
+        roll = controls.RCController.Roll.ReadValue<float>();
         Debug.Log("Raw: Throttle " + throttle + " Yaw " + yaw + " Pitch " + pitch + " Roll " + roll);
 
         float throttleSetpoint = throttle;
@@ -92,7 +102,7 @@ public class FlightController : MonoBehaviour
         cumulativeIRoll = rollResult.cumulativeI;
         prevErrorRoll = rollResult.prevError;
 
-        
+
         Debug.Log("PID: Yaw " + yawResult.PID + " Pitch " + pitchResult.PID + " Roll " + rollResult.PID);
 
         f1 = throttleSetpoint + pitchResult.PID - yawResult.PID - rollResult.PID;
@@ -114,10 +124,11 @@ public class FlightController : MonoBehaviour
 
         float rcSuperfactor = 1.0f - (inputAbs * rates[axis]);
 
-        if(rcSuperfactor < 0.01f)
+        if (rcSuperfactor < 0.01f)
         {
             rcSuperfactor = 0.01f;
-        }else if(rcSuperfactor > 1.00f)
+        }
+        else if (rcSuperfactor > 1.00f)
         {
             rcSuperfactor = 1.00f;
         }
