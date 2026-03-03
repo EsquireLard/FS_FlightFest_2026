@@ -17,24 +17,16 @@ public class FlightController : MonoBehaviour
 
 
     //PID constants
-    float kPPitch; // Same as Roll
-    float kPYaw;
-
-    float kIPitch; // Same as Roll
-    float kIYaw;
-
-    float kDPitch; // Same as Roll
-    float kDYaw;
+    float[] kP;
+    float[] kI;
+    float[] kD;
 
 
-    //PID cumulative error terms
-    float cumulativeIPitch;
-    float cumulativeIYaw;
-    float cumulativeIRoll;
+    //PID cumulative terms
+    float[] cumulativeI;
+    float[] prevError;
+    float[] prevTime;
 
-    float prevErrorPitch;
-    float prevErrorYaw;
-    float prevErrorRoll;
 
     //Rates
     float[] rcExpo;
@@ -56,16 +48,14 @@ public class FlightController : MonoBehaviour
 
     void Start()
     {
-
+        prevTime = new float[3] {Time.time, Time.time, Time.time};
+        prevError = new float[3] { 0.0f, 0.0f, 0.0f };
+        cumulativeI = new float[3] { 0.0f, 0.0f, 0.0f };
 
         //TODO we need to tune these constants
-        kPPitch = 0.6f;
-        kIPitch = 3.5f;
-        kDPitch = 0.03f;
-
-        kPYaw = 2.0f;
-        kIYaw = 12.0f;
-        kDYaw = 0.0f;
+        kP = new float[3] { 2.0f, 0.6f, 0.6f };
+        kI = new float[3] { 12.0f, 3.5f, 3.5f };
+        kD = new float[3] { 0.0f, 0.03f, 0.03f };
 
         rcExpo = new float[3] { 0.1f, 0.1f, 0.1f };
         rcRates = new float[3] { 1.0f, 1.0f, 1.0f };
@@ -75,40 +65,30 @@ public class FlightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log((controls == null) ? "controls is NULL" : "controls is OK");
-        Debug.Log((controls.RCController.Throttle == null) ? "Throttle is NULL" : "Throttle is OK");
-
-        throttle = controls.RCController.Throttle.ReadValue<float>();
+         throttle = controls.RCController.Throttle.ReadValue<float>();
         yaw = controls.RCController.Yaw.ReadValue<float>();
         pitch = controls.RCController.Pitch.ReadValue<float>();
         roll = controls.RCController.Roll.ReadValue<float>();
         Debug.Log("Raw: Throttle " + throttle + " Yaw " + yaw + " Pitch " + pitch + " Roll " + roll);
 
-        float throttleSetpoint = throttle;
+        float throttleSetpoint = (throttle + 1) / 2.0f;
         float yawSetpoint = ComputeBetaflightRates(0, yaw);
         float pitchSetpoint = ComputeBetaflightRates(1, pitch);
         float rollSetpoint = ComputeBetaflightRates(2, roll);
-        Debug.Log("Set: Throttle " + throttle + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
+        Debug.Log("Set: Throttle " + throttleSetpoint + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
 
-        PIDresult yawResult = PIDEquation(yawSetpoint, state.angularVelocity.y, cumulativeIYaw, prevErrorYaw, kPYaw, kIYaw, kDYaw);
-        cumulativeIYaw = yawResult.cumulativeI;
-        prevErrorYaw = yawResult.prevError;
+        float yawPID = PIDEquation(yawSetpoint, state.angularVelocity.y, 0) / 1000.0f;
+        float pitchPID = PIDEquation(pitchSetpoint, state.angularVelocity.x, 1) / 1000.0f;
+        float rollPID = PIDEquation(rollSetpoint, state.angularVelocity.z, 2) / 1000.0f;
 
-        PIDresult pitchResult = PIDEquation(pitchSetpoint, state.angularVelocity.x, cumulativeIPitch, prevErrorPitch, kPPitch, kIPitch, kDPitch);
-        cumulativeIPitch = pitchResult.cumulativeI;
-        prevErrorPitch = pitchResult.prevError;
+        Debug.Log("PID: Yaw " + yawPID + " Pitch " + pitchPID + " Roll " + rollPID);
 
-        PIDresult rollResult = PIDEquation(rollSetpoint, state.angularVelocity.z, cumulativeIRoll, prevErrorRoll, kPPitch, kIPitch, kDPitch);
-        cumulativeIRoll = rollResult.cumulativeI;
-        prevErrorRoll = rollResult.prevError;
+        f1 = throttleSetpoint + pitchPID - yawPID - rollPID;
+        f2 = throttleSetpoint + pitchPID + yawPID + rollPID;
+        f3 = throttleSetpoint - pitchPID - yawPID + rollPID;
+        f4 = throttleSetpoint - pitchPID + yawPID - rollPID;
 
-
-        Debug.Log("PID: Yaw " + yawResult.PID + " Pitch " + pitchResult.PID + " Roll " + rollResult.PID);
-
-        f1 = throttleSetpoint + pitchResult.PID - yawResult.PID - rollResult.PID;
-        f2 = throttleSetpoint + pitchResult.PID + yawResult.PID + rollResult.PID;
-        f3 = throttleSetpoint - pitchResult.PID - yawResult.PID + rollResult.PID;
-        f4 = throttleSetpoint - pitchResult.PID + yawResult.PID - rollResult.PID;
+        Debug.Log("Thrusts: F1 " + f1 + " F2 " + f2 + " F3 " + f3 + " F4 " + f4);
 
         //TODO thrust clamp
 
@@ -139,15 +119,20 @@ public class FlightController : MonoBehaviour
         return angleRate;
     }
 
-    PIDresult PIDEquation(float setpoint, float measurement, float cumulativeI, float prevError, float kP, float kI, float kD)
+    float PIDEquation(float setpoint, float measurements, int axis)
     {
-        float error = setpoint - measurement;
+        float deltaTime = Time.time - prevTime[axis]; //TODO This is not correct, we need to use the correct previous time for each axis
+        prevTime[axis] = Time.time;   
+        
+        float error = setpoint - measurements;
+        prevError[axis] = error;
 
         //Proportional term
-        float P = kP * error;
+        float P = kP[axis] * error;
 
         //Integral term
-        float I = cumulativeI + kI * error; //TODO This is not correct, we need to integrate the error over time
+        float I = cumulativeI[axis] + kI[axis] * error * deltaTime; //TODO This is not correct, we need to integrate the error over time
+        cumulativeI[axis] = I;
 
         if (I > 400) //TODO This is a very arbitrary threshold, we need to tune this
         {
@@ -160,20 +145,20 @@ public class FlightController : MonoBehaviour
 
         //Derivative term
 
-        float D = kD * (error - prevError); //TODO This is not correct, we need to divide by the time step
+        float D = kD[axis] * (error - prevError[axis]) / deltaTime; //TODO This is not correct, we need to divide by the time step
 
         float PID = P + I + D;
 
-        if (PID > 400) //TODO This is a very arbitrary threshold, we need to tune this
+        if (PID > 500) //TODO This is a very arbitrary threshold, we need to tune this
         {
-            PID = 400;
+            PID = 500;
         }
-        else if (PID < -400)
+        else if (PID < -500)
         {
-            PID = -400;
+            PID = -500;
         }
 
-        return new PIDresult(PID, I, error);
+        return PID;
     }
 }
 
