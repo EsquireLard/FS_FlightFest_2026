@@ -1,0 +1,95 @@
+{
+    "version": 1,
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "RCController",
+            "id": "978d899a-9f9a-4338-a4f3-ff11676019c1",
+            "actions": [
+                {
+                    "name": "Throttle",
+                    "type": "Value",
+                    "id": "40f1a8ef-40b2-4594-8037-c5c2b712337a",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Yaw",
+                    "type": "Value",
+                    "id": "13a5d436-da63-4f7a-8629-7e50037af933",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Pitch",
+                    "type": "Value",
+                    "id": "e5735504-d521-43ab-ad14-56d7e026c27e",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Roll",
+                    "type": "Value",
+                    "id": "ae3013af-3730-481d-b9cb-661730fa89ae",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5faa4596-5fc4-4998-9fe0-33ac16b55f55",
+                    "path": "<HID::www.startrc.com STARTRC>/rx",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Yaw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8644c054-6a24-406d-be11-7dd9d627dcab",
+                    "path": "<HID::www.startrc.com STARTRC>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "57ecd336-aa25-4b2b-99ba-8a3d0f847ae7",
+                    "path": "<HID::www.startrc.com STARTRC>/stick/y",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "",
+                    "action": "Pitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "745619f0-e486-458d-9fdd-0843e5d17607",
+                    "path": "<HID::www.startrc.com STARTRC>/stick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
