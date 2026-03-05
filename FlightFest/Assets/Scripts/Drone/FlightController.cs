@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class FlightController : MonoBehaviour
 {
-    DroneState state;
+    private DronePhysics dronePhysics;
     private Controls controls;
 
     // I think this is going to be a raw measurement of the input, and then we will apply the rate transformation
@@ -34,13 +34,13 @@ public class FlightController : MonoBehaviour
 
     //OutputRotor Thrusts
     public float[] motorMix;
-
     float[][] motorMixMatrix;
 
     void Awake()
     {
         controls = new Controls();
         controls.RCController.Enable();
+        dronePhysics = GetComponent<DronePhysics>();
     }
 
     void Start()
@@ -50,8 +50,8 @@ public class FlightController : MonoBehaviour
         cumulativeI = new float[3] { 0.0f, 0.0f, 0.0f };
 
         //TODO we need to tune these constants
-        kP = new float[3] { 2.0f, 0.6f, 0.6f };
-        kI = new float[3] { 12.0f, 3.5f, 3.5f };
+        kP = new float[3] { 0.6f, 0.6f, 1.0f };
+        kI = new float[3] { 0.45f, 0.45f, 0.45f };
         kD = new float[3] { 0.0f, 0.03f, 0.03f };
 
         rcExpo = new float[3] { 0.1f, 0.1f, 0.1f };
@@ -70,7 +70,7 @@ public class FlightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Controls: " + controls);
+        //Debug.Log("Controls: " + controls);
         // Debug.Log("Controls: " + controls);
         // Debug.Log("RC Controller: " + controls.RCController);
         // Debug.Log("Throttle: " + controls.RCController.Throttle.ReadValue<float>());
@@ -79,20 +79,20 @@ public class FlightController : MonoBehaviour
         yaw = controls.RCController.Yaw.ReadValue<float>();
         pitch = controls.RCController.Pitch.ReadValue<float>();
         roll = controls.RCController.Roll.ReadValue<float>();
-        Debug.Log("Raw: Throttle " + throttle + " Yaw " + yaw + " Pitch " + pitch + " Roll " + roll);
+        //Debug.Log("Raw: Throttle " + throttle + " Yaw " + yaw + " Pitch " + pitch + " Roll " + roll);
 
         float throttleSetpoint = (throttle + 1) / 2.0f;
-        float yawSetpoint = ComputeBetaflightRates(0, yaw);
+        float yawSetpoint = ComputeBetaflightRates(0, yaw); // Fix the axis numbers with the axis order
         float pitchSetpoint = ComputeBetaflightRates(1, pitch);
         float rollSetpoint = ComputeBetaflightRates(2, roll);
 
-        Debug.Log("Set: Throttle " + throttleSetpoint + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
+        //Debug.Log("Set: Throttle " + throttleSetpoint + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
 
-        float yawPID = PIDEquation(yawSetpoint, state.angularVelocity.y, 0) / 1000.0f;
-        float pitchPID = PIDEquation(pitchSetpoint, state.angularVelocity.x, 1) / 1000.0f;
-        float rollPID = PIDEquation(rollSetpoint, state.angularVelocity.z, 2) / 1000.0f;
+        float yawPID = PIDEquation(yawSetpoint, dronePhysics.currentState.angularVelocity.z, 0) / 1000.0f;
+        float pitchPID = PIDEquation(pitchSetpoint, dronePhysics.currentState.angularVelocity.y, 1) / 1000.0f;
+        float rollPID = PIDEquation(rollSetpoint, dronePhysics.currentState.angularVelocity.x, 2) / 1000.0f;
 
-        Debug.Log("PID: Yaw " + yawPID + " Pitch " + pitchPID + " Roll " + rollPID);
+        //Debug.Log("PID: Yaw " + yawPID + " Pitch " + pitchPID + " Roll " + rollPID);
 
         // motorMix[0] = throttleSetpoint + pitchPID - yawPID - rollPID;
         // motorMix[1] = throttleSetpoint + pitchPID + yawPID + rollPID;
@@ -111,7 +111,7 @@ public class FlightController : MonoBehaviour
 
         float motorRange = motorMax - motorMin;
 
-        Debug.Log("Thrusts: F1 " + motorMix[0] + " F2 " + motorMix[1] + " F3 " + motorMix[2] + " F4 " + motorMix[3] + " Min: " + motorMin + " Max: " + motorMax);
+        //Debug.Log("Thrusts: F1 " + motorMix[0] + " F2 " + motorMix[1] + " F3 " + motorMix[2] + " F4 " + motorMix[3] + " Min: " + motorMin + " Max: " + motorMax);
         //Debug.Log("Min: " + motorMin + " Max: " + motorMax);
         
         float normalizationFactor = motorRange > 1.0f ? 1.0f / motorRange : 1.0f;
@@ -119,7 +119,7 @@ public class FlightController : MonoBehaviour
         
         for (int i = 0; i < 4; i++)
         {
-            motorMix[i] = (throttleSetpoint + motorMix[i] * normalizationFactor) * 0.081423f; //this value is the 
+            motorMix[i] = (throttleSetpoint + motorMix[i] * normalizationFactor) * 0.08338501f; //this value is the 
         }
 
         Debug.Log("Normalized Thrusts: F1 " + (motorMix[0]) + " F2 " + (motorMix[1]) + " F3 " + (motorMix[2]) + " F4 " + (motorMix[3]) + " Throttle Setpoint: " + throttleSetpoint + " Normalization Factor: " + normalizationFactor);
@@ -163,6 +163,7 @@ public class FlightController : MonoBehaviour
         
         float PID = P + I + D;
         PID = System.Math.Clamp(PID, -500, 500); //Betaflight values
+        Debug.Log("Axis: " + axis + " measurement: " + measurements + " setpoint: " + setpoint + " P: " + P + " I: " + I + " D: " + D + " PID: " + PID);
 
         return PID;
     }

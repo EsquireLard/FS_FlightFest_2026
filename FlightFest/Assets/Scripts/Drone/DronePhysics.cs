@@ -7,12 +7,12 @@ public class DronePhysics : MonoBehaviour
     float mass;
     float k; //Rotor's torque constant
     float l; //Arm Length
-    float g; //9.81 m/s2 TODO figure out how to do it with integers 
+    float g; //9.81 m/s2 TODO figure out how to do it with integers
     Vector3 InertiaMatrix;
     Vector3 InertiaMAtrixInverse;
     float frameWidth; //Frame is a square
     float sqrt2;
-    DroneState currentState;
+    public DroneState currentState;
     private FlightController flightController; // Reference to the FlightController script
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -23,14 +23,14 @@ public class DronePhysics : MonoBehaviour
 
     void Start()
     {
-        mass = 0.017f; //g
-        l = 0.033f; //mm
-        k = 1; //TODO figure out
+        mass = 0.017f; //kg
+        l = 0.033f; //m
+        k = 0.01f; //Nm TODO figure out
         g = 9.81f; //m/s2
         sqrt2 = Mathf.Sqrt(2);
 
-        maxThrustPerMotor = mass / 1000 * g / 2; //I am just making the drone able to hover at 50% throttle, so the max thrust per motor is mass * g / 4 (since we have 4 motors) and then we divide by 2 to get the max thrust at 100% throttle. This is just a starting point and we can adjust it later based on how the drone actually performs in the simulation.
-        frameWidth = 83; //mm
+        maxThrustPerMotor = mass * g / 2; //I am just making the drone able to hover at 50% throttle, so the max thrust per motor is mass * g / 4 (since we have 4 motors) and then we divide by 2 to get the max thrust at 100% throttle. This is just a starting point and we can adjust it later based on how the drone actually performs in the simulation.
+        frameWidth = 0.083f; //m
         InertiaMatrix = new Vector3(
             mass * frameWidth * frameWidth / 12,
             mass * frameWidth * frameWidth / 12,
@@ -47,12 +47,21 @@ public class DronePhysics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("StatePrev: Position: " + currentState.position + " Orientation: " + currentState.orientation);
+        /*Debug.Log("StatePrev: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+                 ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
+                 " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
+                 " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
+        */
+        // Debug.Log("Max Thrust Per Motor: " + maxThrustPerMotor);
         currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
-                                                                                                     //TODO figure out why ref 
-        
-        Debug.Log("StateNew: Position: " + currentState.position + " Orientation: " + currentState.orientation);
-        transform.position = new Vector3(currentState.position.x, currentState.position.z, currentState.position.y); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
+                                                                                                     //TODO figure out why ref
+
+        /*Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+         ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
+         " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
+         " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
+        */
+        transform.position = new Vector3(currentState.position.y, currentState.position.z, currentState.position.x); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
         transform.rotation = new Quaternion(-currentState.orientation.y, -currentState.orientation.z, currentState.orientation.x, currentState.orientation.w);
     }
 
@@ -64,11 +73,16 @@ public class DronePhysics : MonoBehaviour
             l / sqrt2 * (-controlInput[0] - controlInput[1] + controlInput[2] + controlInput[3]),
             k * (controlInput[0] - controlInput[1] + controlInput[2] - controlInput[3])
         );
+        // Debug.Log("Control Input: " + controlInput[0] + " " + controlInput[1] + " " + controlInput[2] + " " + controlInput[3] + " c: " + c + "l: " + l + " k: " + k);
+        // Debug.Log("x: " + l / sqrt2 * (controlInput[0] - controlInput[1] - controlInput[2] + controlInput[3]));
+        // Debug.Log("y: " + l / sqrt2 * (-controlInput[0] - controlInput[1] + controlInput[2] + controlInput[3]));
+        // Debug.Log("z: " + k * (controlInput[0] - controlInput[1] + controlInput[2] - controlInput[3]));
+        // Debug.Log("Torque: " + torque.x + ", " + torque.y + ", " + torque.z);
 
         DroneState derivative = new DroneState
         {
             position = state.velocity,
-            velocity = state.orientation * new Vector3(0, 0, c) - new Vector3(0, 0, g), //TODO check the * logic here 
+            velocity = state.orientation * new Vector3(0, 0, c) - new Vector3(0, 0, g), //TODO check the * logic here
 
             orientation = new Quaternion(
                 0.5f * (state.angularVelocity.x * state.orientation.w + state.angularVelocity.z * state.orientation.y - state.angularVelocity.y * state.orientation.z),
@@ -79,6 +93,12 @@ public class DronePhysics : MonoBehaviour
 
             angularVelocity = Vector3.Scale(InertiaMAtrixInverse, torque - Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity))) // Since the inertia matrix is diagonal, the matrix–vector multiplication reduces to element-wise scaling of the vector components.
         };
+        // Debug.Log("item 1: " + Vector3.Scale(InertiaMatrix, state.angularVelocity));
+        // Debug.Log("item 2: " + Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity)));
+        // Debug.Log("torque: " + torque.x + ", " + torque.y + ", " + torque.z);
+        // Debug.Log("item 3: " + (torque - Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity))));
+
+        // Debug.Log("Derivative: Angular Velocity: " + derivative.angularVelocity);
 
         return derivative;
     }
