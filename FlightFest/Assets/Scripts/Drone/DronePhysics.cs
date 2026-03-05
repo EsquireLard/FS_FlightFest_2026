@@ -14,6 +14,8 @@ public class DronePhysics : MonoBehaviour
     float sqrt2;
     public DroneState currentState;
     private FlightController flightController; // Reference to the FlightController script
+    private Rigidbody rb; // Reference to the Rigidbody component
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -42,27 +44,42 @@ public class DronePhysics : MonoBehaviour
             1 / InertiaMatrix.z
         );
         ResetDroneState();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*Debug.Log("StatePrev: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
-                 ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
-                 " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
-                 " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
-        */
-        // Debug.Log("Max Thrust Per Motor: " + maxThrustPerMotor);
-        currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
-                                                                                                     //TODO figure out why ref
+        float[] controlInput = flightController.motorMix; // Get the motor mix from the FlightController
 
-        /*Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
-         ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
-         " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
-         " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
-        */
-        transform.position = new Vector3(currentState.position.y, currentState.position.z, currentState.position.x); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
-        transform.rotation = new Quaternion(-currentState.orientation.y, -currentState.orientation.z, currentState.orientation.x, currentState.orientation.w);
+        float c = (controlInput[0] + controlInput[1] + controlInput[2] + controlInput[3]) / mass;
+        Vector3 torque = new Vector3(
+            -l / sqrt2 * (-controlInput[0] - controlInput[1] + controlInput[2] + controlInput[3]),
+            -k * (controlInput[0] - controlInput[1] + controlInput[2] - controlInput[3]),
+            l / sqrt2 * (controlInput[0] - controlInput[1] - controlInput[2] + controlInput[3])
+        );
+
+        rb.AddTorque(torque);
+        rb.AddForce(transform.rotation *  new Vector3(0, c, 0) - new Vector3(0, g, 0));
+
+    //     /*Debug.Log("StatePrev: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+    //              ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
+    //              " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
+    //              " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
+    //     */
+    //     // Debug.Log("Max Thrust Per Motor: " + maxThrustPerMotor);
+    //     currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
+    //                                                                                                  //TODO figure out why ref
+
+    //     /*Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+    //      ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
+    //      " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
+    //      " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
+    //     */
+    //     transform.position = new Vector3(currentState.position.y, currentState.position.z, currentState.position.x); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
+    //     transform.rotation = new Quaternion(-currentState.orientation.y, -currentState.orientation.z, currentState.orientation.x, currentState.orientation.w);
+    currentState.position = new Vector3(transform.position.y, transform.position.z, transform.position.x); //In Unity gravity is in the y axis but in our simulation is in the z axis so we need to swap them
+    currentState.orientation = new Quaternion(-transform.rotation.y, -transform.rotation.z, transform.rotation.x, transform.rotation.w);
     }
 
     DroneState ComputeDynamics(DroneState state, float[] controlInput) //TODO pre calc torque and c before this cause is the same in every runge kutta step

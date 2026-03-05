@@ -123,6 +123,7 @@ public class FlightController : MonoBehaviour
         }
 
         Debug.Log("Normalized Thrusts: F1 " + (motorMix[0]) + " F2 " + (motorMix[1]) + " F3 " + (motorMix[2]) + " F4 " + (motorMix[3]) + " Throttle Setpoint: " + throttleSetpoint + " Normalization Factor: " + normalizationFactor);
+    
     }
 
     float ComputeBetaflightRates(int axis, float input)
