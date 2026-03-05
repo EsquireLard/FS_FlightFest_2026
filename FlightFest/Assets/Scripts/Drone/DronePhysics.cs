@@ -3,6 +3,7 @@ using System;
 
 public class DronePhysics : MonoBehaviour
 {
+    float maxThrustPerMotor;
     float mass;
     float k; //Rotor's torque constant
     float l; //Arm Length
@@ -12,51 +13,56 @@ public class DronePhysics : MonoBehaviour
     float frameWidth; //Frame is a square
     float sqrt2;
     DroneState currentState;
+    private FlightController flightController; // Reference to the FlightController script
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        flightController = GetComponent<FlightController>(); // Get the FlightController component attached to the same GameObject
+    }
+
     void Start()
     {
-        mass = 17; //g
-        l = 33; //mm
-        k = 0; //figure out
+        mass = 0.017f; //g
+        l = 0.033f; //mm
+        k = 1; //TODO figure out
         g = 9.81f; //m/s2
         sqrt2 = Mathf.Sqrt(2);
 
+        maxThrustPerMotor = mass / 1000 * g / 2; //I am just making the drone able to hover at 50% throttle, so the max thrust per motor is mass * g / 4 (since we have 4 motors) and then we divide by 2 to get the max thrust at 100% throttle. This is just a starting point and we can adjust it later based on how the drone actually performs in the simulation.
         frameWidth = 83; //mm
         InertiaMatrix = new Vector3(
             mass * frameWidth * frameWidth / 12,
             mass * frameWidth * frameWidth / 12,
             mass * frameWidth * frameWidth / 6
         );
-        InertiaMAtrixInverse = new Vector3(  //Since is a diagolanl matrix we can jsut represent it as a vector and the inverse is jsut the inverse of the diagonal elements.
+        InertiaMAtrixInverse = new Vector3(  //Since is a diagonal matrix we can jsut represent it as a vector and the inverse is jsut the inverse of the diagonal elements.
             1 / InertiaMatrix.x,
             1 / InertiaMatrix.y,
             1 / InertiaMatrix.z
         );
-        currentState = new DroneState //TODO figure out how to set the initial state
-        {
-            position = Vector3.zero,
-            orientation = Quaternion.identity,
-            velocity = Vector3.zero,
-            angularVelocity = Vector3.zero
-        };
+        ResetDroneState();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector4 controlInput = Vector4.zero; //TODO figure out how to get the control input from the controller
-        currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, controlInput); //TODO figure out control input and state management
-                                                                                              //TODO figure out why ref      
+        Debug.Log("StatePrev: Position: " + currentState.position + " Orientation: " + currentState.orientation);
+        currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
+                                                                                                     //TODO figure out why ref 
+        
+        Debug.Log("StateNew: Position: " + currentState.position + " Orientation: " + currentState.orientation);
+        transform.position = new Vector3(currentState.position.x, currentState.position.z, currentState.position.y); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
+        transform.rotation = new Quaternion(-currentState.orientation.y, -currentState.orientation.z, currentState.orientation.x, currentState.orientation.w);
     }
 
-    DroneState ComputeDynamics(DroneState state, Vector4 controlInput) //TODO pre calc torque and c before this cause is the same in every runge kutta step
+    DroneState ComputeDynamics(DroneState state, float[] controlInput) //TODO pre calc torque and c before this cause is the same in every runge kutta step
     {
-        float c = (controlInput.x + controlInput.y + controlInput.z + controlInput.w) / mass; // Collective thrust
+        float c = (controlInput[0] + controlInput[1] + controlInput[2] + controlInput[3]) / mass; // Collective thrust
         Vector3 torque = new Vector3(
-            l / sqrt2 * ( controlInput.x - controlInput.y - controlInput.z + controlInput.w),
-            l / sqrt2 * (-controlInput.x - controlInput.y + controlInput.z + controlInput.w),
-            k * (controlInput.x - controlInput.y + controlInput.z - controlInput.w)
+            l / sqrt2 * (controlInput[0] - controlInput[1] - controlInput[2] + controlInput[3]),
+            l / sqrt2 * (-controlInput[0] - controlInput[1] + controlInput[2] + controlInput[3]),
+            k * (controlInput[0] - controlInput[1] + controlInput[2] - controlInput[3])
         );
 
         DroneState derivative = new DroneState
@@ -77,7 +83,7 @@ public class DronePhysics : MonoBehaviour
         return derivative;
     }
 
-    DroneState FRK4(Func<DroneState, Vector4, DroneState> func, float dt, ref DroneState state, Vector4 controlInput)
+    DroneState FRK4(Func<DroneState, float[], DroneState> func, float dt, ref DroneState state, float[] controlInput)
     {
         DroneState k1 = func(state, controlInput);
         DroneState k2 = func(state + k1 * (dt / 2), controlInput);
@@ -87,5 +93,16 @@ public class DronePhysics : MonoBehaviour
         state += (k1 + 2.0f * k2 + 2.0f * k3 + k4) * (dt / 6.0f);
         state.orientation = state.orientation.normalized; // Normalize the quaternion to prevent drift
         return state;
+    }
+
+    void ResetDroneState()
+    {
+        currentState = new DroneState //TODO figure out how to set the initial state
+        {
+            position = new Vector3(transform.position.x, transform.position.z, transform.position.y), //In Unity gravity is in the y axis but in our simulation is in the z axis so we need to swap them
+            orientation = new Quaternion(-transform.rotation.y, -transform.rotation.z, transform.rotation.x, transform.rotation.w),
+            velocity = Vector3.zero,
+            angularVelocity = Vector3.zero
+        };
     }
 }

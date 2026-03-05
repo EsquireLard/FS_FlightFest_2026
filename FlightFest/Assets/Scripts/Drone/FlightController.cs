@@ -15,7 +15,6 @@ public class FlightController : MonoBehaviour
     [SerializeField] float rotateSpeed;
     [SerializeField] float flySpeed;
 
-
     //PID constants
     float[] kP;
     float[] kI;
@@ -34,7 +33,7 @@ public class FlightController : MonoBehaviour
     float[] rates;
 
     //OutputRotor Thrusts
-    float[] motorMix;
+    public float[] motorMix;
 
     float[][] motorMixMatrix;
 
@@ -71,6 +70,7 @@ public class FlightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Controls: " + controls);
         // Debug.Log("Controls: " + controls);
         // Debug.Log("RC Controller: " + controls.RCController);
         // Debug.Log("Throttle: " + controls.RCController.Throttle.ReadValue<float>());
@@ -119,7 +119,7 @@ public class FlightController : MonoBehaviour
         
         for (int i = 0; i < 4; i++)
         {
-            motorMix[i] = throttleSetpoint + motorMix[i] * normalizationFactor;
+            motorMix[i] = (throttleSetpoint + motorMix[i] * normalizationFactor) * 0.081423f; //this value is the 
         }
 
         Debug.Log("Normalized Thrusts: F1 " + (motorMix[0]) + " F2 " + (motorMix[1]) + " F3 " + (motorMix[2]) + " F4 " + (motorMix[3]) + " Throttle Setpoint: " + throttleSetpoint + " Normalization Factor: " + normalizationFactor);
@@ -155,31 +155,14 @@ public class FlightController : MonoBehaviour
 
         //Integral term
         float I = cumulativeI[axis] + kI[axis] * error * deltaTime;
+        I = System.Math.Clamp(I, -400, 400); //Betaflight values
         cumulativeI[axis] = I;
 
-        if (I > 400) //Betaflight values
-        {
-            I = 400;
-        }
-        else if (I < -400)
-        {
-            I = -400;
-        }
-
         //Derivative term
-
-        float D = kD[axis] * (error - prevError[axis]) / deltaTime;
-
+        float D = deltaTime == 0 ? 0 : kD[axis] * (error - prevError[axis]) / deltaTime;
+        
         float PID = P + I + D;
-
-        if (PID > 500) //Betaflight values
-        {
-            PID = 500;
-        }
-        else if (PID < -500)
-        {
-            PID = -500;
-        }
+        PID = System.Math.Clamp(PID, -500, 500); //Betaflight values
 
         return PID;
     }
