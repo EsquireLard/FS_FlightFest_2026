@@ -14,11 +14,13 @@ public class DronePhysics : MonoBehaviour
     float sqrt2;
     public DroneState currentState;
     private FlightController flightController; // Reference to the FlightController script
+    private Rigidbody rb; // Reference to the Rigidbody component
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         flightController = GetComponent<FlightController>(); // Get the FlightController component attached to the same GameObject
+        rb = GetComponent<Rigidbody>(); // Get the Rigidbody component attached to the same GameObject
     }
 
     void Start()
@@ -56,11 +58,14 @@ public class DronePhysics : MonoBehaviour
         currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
                                                                                                      //TODO figure out why ref
 
-        /*Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+        Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
          ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
          " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
          " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
-        */
+        
+        Debug.Log("Real AngularVelocity: (" + rb.angularVelocity.x + ", " + rb.angularVelocity.y + ", " + rb.angularVelocity.z + ")");
+        rb.angularVelocity = currentState.angularVelocity;
+        rb.linearVelocity = currentState.velocity;
         transform.position = new Vector3(currentState.position.y, currentState.position.z, currentState.position.x); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
         transform.rotation = new Quaternion(-currentState.orientation.y, -currentState.orientation.z, currentState.orientation.x, currentState.orientation.w);
     }
@@ -98,8 +103,8 @@ public class DronePhysics : MonoBehaviour
         // Debug.Log("torque: " + torque.x + ", " + torque.y + ", " + torque.z);
         // Debug.Log("item 3: " + (torque - Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity))));
 
-        // Debug.Log("Derivative: Angular Velocity: " + derivative.angularVelocity);
-
+        // Debug.Log("Derivative: Angular Velocity: " + derivative.angularVelocity);\
+        
         return derivative;
     }
 
