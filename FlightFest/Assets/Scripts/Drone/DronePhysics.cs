@@ -94,7 +94,7 @@ public class DronePhysics : MonoBehaviour
                 0.5f * (state.angularVelocity.y * state.orientation.w - state.angularVelocity.z * state.orientation.x + state.angularVelocity.x * state.orientation.z),
                 0.5f * (state.angularVelocity.z * state.orientation.w + state.angularVelocity.y * state.orientation.x - state.angularVelocity.x * state.orientation.y),
                 0.5f * (-state.angularVelocity.x * state.orientation.x - state.angularVelocity.y * state.orientation.y - state.angularVelocity.z * state.orientation.z)
-            ).normalized,
+            ),
 
             angularVelocity = Vector3.Scale(InertiaMAtrixInverse, torque - Vector3.Cross(state.angularVelocity, Vector3.Scale(InertiaMatrix, state.angularVelocity))) // Since the inertia matrix is diagonal, the matrix–vector multiplication reduces to element-wise scaling of the vector components.
         };
@@ -124,8 +124,8 @@ public class DronePhysics : MonoBehaviour
     {
         currentState = new DroneState //TODO figure out how to set the initial state
         {
-            position = new Vector3(transform.position.x, transform.position.z, transform.position.y), //In Unity gravity is in the y axis but in our simulation is in the z axis so we need to swap them
-            orientation = new Quaternion(-transform.rotation.y, -transform.rotation.z, transform.rotation.x, transform.rotation.w),
+            position = new Vector3(0f, 45f, 0.07f), //In Unity gravity is in the y axis but in our simulation is in the z axis so we need to swap them
+            orientation = Quaternion.Euler(0f, 0f, 90f),
             velocity = Vector3.zero,
             angularVelocity = Vector3.zero
         };

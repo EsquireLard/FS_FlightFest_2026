@@ -54,7 +54,7 @@ public class FlightController : MonoBehaviour
         // kI = new float[3] { 0.45f, 0.45f, 0.45f };
         // kD = new float[3] { 0.0f, 0.03f, 0.03f };
 
-        kP = new float[3] { 0.4f, 0f, 0f };
+        kP = new float[3] { 4f, 4f, 4f };
         kI = new float[3] { 0f, 0f, 0f };
         kD = new float[3] { 0f, 0f, 0f };
 
