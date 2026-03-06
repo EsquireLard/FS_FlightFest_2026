@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class FlightController : MonoBehaviour
 {
+    private Rigidbody rb;
     private DronePhysics dronePhysics;
     private Controls controls;
 
@@ -41,6 +42,7 @@ public class FlightController : MonoBehaviour
         controls = new Controls();
         controls.RCController.Enable();
         dronePhysics = GetComponent<DronePhysics>();
+        rb = GetComponent<Rigidbody>();
     }
 
     void Start()
@@ -50,7 +52,7 @@ public class FlightController : MonoBehaviour
         cumulativeI = new float[3] { 0.0f, 0.0f, 0.0f };
 
         //TODO we need to tune these constants
-        kP = new float[3] { 0.0f, 0.0f, 0.0f };
+        kP = new float[3] { 4.0f, 10.0f, 4.0f };
         kI = new float[3] { 0.0f, 0.0f, 0.0f };
         kD = new float[3] { 0.0f, 0.0f, 0.0f };
 
@@ -88,9 +90,9 @@ public class FlightController : MonoBehaviour
 
         //Debug.Log("Set: Throttle " + throttleSetpoint + " Yaw " + yawSetpoint + " Pitch " + pitchSetpoint + " Roll " + rollSetpoint);
 
-        float yawPID = PIDEquation(yawSetpoint, dronePhysics.currentState.angularVelocity.z, 0) / 1000.0f;
-        float pitchPID = PIDEquation(pitchSetpoint, dronePhysics.currentState.angularVelocity.y, 1) / 1000.0f;
-        float rollPID = PIDEquation(rollSetpoint, dronePhysics.currentState.angularVelocity.x, 2) / 1000.0f;
+        float yawPID = PIDEquation(yawSetpoint, rb.angularVelocity.y, 0) / 1000.0f;
+        float pitchPID = PIDEquation(pitchSetpoint, rb.angularVelocity.y, 1) / 1000.0f;
+        float rollPID = PIDEquation(rollSetpoint, rb.angularVelocity.x, 2) / 1000.0f;
 
         //Debug.Log("PID: Yaw " + yawPID + " Pitch " + pitchPID + " Roll " + rollPID);
 
