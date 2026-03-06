@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84dd991dd1023ba4cb77072574ee2e4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveSpawner
-  objectiveTime: 2
+  objectiveTime: 0.01
   objectivePopup: TUTORIAL MESSAGE
   nextObjective: {fileID: 0}
   objectivePrefab: {fileID: 2544226023865870790, guid: 981da026f380e644db3bde0ca283a611, type: 3}

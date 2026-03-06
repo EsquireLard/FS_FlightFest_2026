@@ -49,6 +49,16 @@ public class DronePhysics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // float c = (flightController.motorMix[0] + flightController.motorMix[1] + flightController.motorMix[2] + flightController.motorMix[3]) / mass; // Collective thrust
+        // Vector3 torque = new Vector3(
+        //     l / sqrt2 * (flightController.motorMix[0] - flightController.motorMix[1] - flightController.motorMix[2] + flightController.motorMix[3]),
+        //     k * (flightController.motorMix[0] - flightController.motorMix[1] + flightController.motorMix[2] - flightController.motorMix[3]),
+        //     l / sqrt2 * (-flightController.motorMix[0] - flightController.motorMix[1] + flightController.motorMix[2] + flightController.motorMix[3])
+        // );
+
+        // rb.AddTorque(torque);
+        // rb.AddForce(transform.up * c); //TODO check the * logic here
+        
         /*Debug.Log("StatePrev: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
                  ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
                  " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
@@ -56,7 +66,7 @@ public class DronePhysics : MonoBehaviour
         */
         // Debug.Log("Max Thrust Per Motor: " + maxThrustPerMotor);
         currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
-                                                                                                     //TODO figure out why ref
+                                                                                                      //TODO figure out why ref
 
         Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
          ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 

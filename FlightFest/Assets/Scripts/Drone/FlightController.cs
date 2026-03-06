@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class FlightController : MonoBehaviour
 {
     private DronePhysics dronePhysics;
+    private Rigidbody rb; // Reference to the Rigidbody component
     private Controls controls;
 
     // I think this is going to be a raw measurement of the input, and then we will apply the rate transformation
@@ -41,6 +42,7 @@ public class FlightController : MonoBehaviour
         controls = new Controls();
         controls.RCController.Enable();
         dronePhysics = GetComponent<DronePhysics>();
+        rb = GetComponent<Rigidbody>(); // Get the Rigidbody component attached to the same GameObject
     }
 
     void Start()

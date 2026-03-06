@@ -536,6 +536,10 @@ PrefabInstance:
       propertyPath: flySpeed
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 4608896049641068323, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6857980903786841168, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
       propertyPath: m_Name
       value: Player
@@ -548,6 +552,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6857980903786841168, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1580958445}
     - targetCorrespondingSourceObject: {fileID: 6857980903786841168, guid: ecd8b7feba3b51f4b8e8336045feeb97, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1580958442}
@@ -580,6 +587,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae6934434bab450498a74f05b1fa8323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DronePhysics
+--- !u!114 &1580958445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1580958437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f84ea3f5ac850e4db49631873d867ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightController
+  rotateSpeed: 0
+  flySpeed: 0
+  motorMix: []
 --- !u!114 &1732292266 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 243886096922102071, guid: 8f5222b1341e21d429b476e3a05cde7c, type: 3}
