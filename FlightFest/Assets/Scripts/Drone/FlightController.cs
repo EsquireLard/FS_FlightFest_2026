@@ -50,13 +50,13 @@ public class FlightController : MonoBehaviour
         cumulativeI = new float[3] { 0.0f, 0.0f, 0.0f };
 
         //TODO we need to tune these constants
-        // kP = new float[3] { 0.6f, 0.6f, 1.0f };
-        // kI = new float[3] { 0.45f, 0.45f, 0.45f };
-        // kD = new float[3] { 0.0f, 0.03f, 0.03f };
+        kP = new float[3] { 60.0f, 60.0f, 100.0f };
+        kI = new float[3] { 45.0f, 45.0f, 45.0f };
+        kD = new float[3] { 0.0f, 0.03f, 0.03f };
 
-        kP = new float[3] { 4f, 4f, 4f };
-        kI = new float[3] { 0f, 0f, 0f };
-        kD = new float[3] { 0f, 0f, 0f };
+        // kP = new float[3] { 0.6f, 0.1f, 0.1f };
+        // kI = new float[3] { 0f, 0f, 0f };
+        // kD = new float[3] { 0f, 0f, 0f };
 
         rcExpo = new float[3] { 0.1f, 0.1f, 0.1f };
         rcRates = new float[3] { 1.0f, 1.0f, 1.0f };
@@ -151,9 +151,8 @@ public class FlightController : MonoBehaviour
         float deltaTime = Time.time - prevTime[axis];
         prevTime[axis] = Time.time;
 
-        float error = setpoint + measurements; //TODO fix this
-        prevError[axis] = error;
-
+        float error = setpoint/ 360f + measurements; //TODO fix this
+    
         //Proportional term
         float P = kP[axis] * error;
 
@@ -164,6 +163,8 @@ public class FlightController : MonoBehaviour
 
         //Derivative term
         float D = deltaTime == 0 ? 0 : kD[axis] * (error - prevError[axis]) / deltaTime;
+
+        prevError[axis] = error;
         
         float PID = P + I + D;
         PID = System.Math.Clamp(PID, -500, 500); //Betaflight values
