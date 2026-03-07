@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Zach's Scene.unity
+    guid: f0eec96612a2db54eb76743aa3fc4f56
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: b4fa052e968f1f249bb8f52cd7adde33, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2de4d023b21db8c44abdf3707a7c4e66, type: 3}
