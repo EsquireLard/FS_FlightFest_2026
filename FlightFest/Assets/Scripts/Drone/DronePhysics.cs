@@ -68,12 +68,12 @@ public class DronePhysics : MonoBehaviour
         currentState = FRK4(ComputeDynamics, Time.deltaTime, ref currentState, flightController.motorMix); //TODO state management
                                                                                                       //TODO figure out why ref
 
-        Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
-         ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
-         " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
-         " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
+        // Debug.Log("StateNew: Position: (" + currentState.position.x + ", " + currentState.position.y + ", " + currentState.position.z + 
+        //  ") Orientation: (" + currentState.orientation.x + ", " + currentState.orientation.y + ", " + currentState.orientation.z + ", " + currentState.orientation.w + ")" + 
+        //  " Velocity: (" + currentState.velocity.x + ", " + currentState.velocity.y + ", " + currentState.velocity.z + ")" + 
+        //  " Angular Velocity: (" + currentState.angularVelocity.x + ", " + currentState.angularVelocity.y + ", " + currentState.angularVelocity.z + ")");
         
-        Debug.Log("Real AngularVelocity: (" + rb.angularVelocity.x + ", " + rb.angularVelocity.y + ", " + rb.angularVelocity.z + ")");
+        // Debug.Log("Real AngularVelocity: (" + rb.angularVelocity.x + ", " + rb.angularVelocity.y + ", " + rb.angularVelocity.z + ")");
         //rb.angularVelocity = currentState.angularVelocity;
         //rb.linearVelocity = currentState.velocity;
         transform.position = new Vector3(currentState.position.y, currentState.position.z, -currentState.position.x); //In Unity grabity is in the y axis but in our simulation is in the z axis so we need to swap them
@@ -130,7 +130,7 @@ public class DronePhysics : MonoBehaviour
         return state;
     }
 
-    void ResetDroneState()
+    public void ResetDroneState()
     {
         currentState = new DroneState //TODO figure out how to set the initial state
         {

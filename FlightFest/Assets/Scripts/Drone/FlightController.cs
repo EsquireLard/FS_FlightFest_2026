@@ -128,7 +128,7 @@ public class FlightController : MonoBehaviour
             motorMix[i] = (throttleSetpoint + motorMix[i] * normalizationFactor) * 0.08338501f; //this value is the 
         }
 
-        Debug.Log("Normalized Thrusts: F1 " + (motorMix[0]) + " F2 " + (motorMix[1]) + " F3 " + (motorMix[2]) + " F4 " + (motorMix[3]) + " Throttle Setpoint: " + throttleSetpoint + " Normalization Factor: " + normalizationFactor);
+        //Debug.Log("Normalized Thrusts: F1 " + (motorMix[0]) + " F2 " + (motorMix[1]) + " F3 " + (motorMix[2]) + " F4 " + (motorMix[3]) + " Throttle Setpoint: " + throttleSetpoint + " Normalization Factor: " + normalizationFactor);
     }
 
     float ComputeBetaflightRates(int axis, float input)
@@ -170,7 +170,7 @@ public class FlightController : MonoBehaviour
         
         float PID = P + I + D;
         PID = System.Math.Clamp(PID, -500, 500); //Betaflight values
-        Debug.Log("Axis: " + axis + " measurement: " + measurements + " setpoint: " + setpoint + " P: " + P + " I: " + I + " D: " + D + " PID: " + PID);
+        //Debug.Log("Axis: " + axis + " measurement: " + measurements + " setpoint: " + setpoint + " P: " + P + " I: " + I + " D: " + D + " PID: " + PID);
 
         return PID;
     }

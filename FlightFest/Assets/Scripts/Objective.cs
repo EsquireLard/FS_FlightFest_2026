@@ -7,7 +7,7 @@ public class Objective : MonoBehaviour
     [SerializeField] public ObjectiveSpawner nextObjective;
     float currentTime;
 
-    bool playerInRange;
+    protected bool playerInRange;
 
     void Awake()
     {
@@ -62,7 +62,7 @@ public class Objective : MonoBehaviour
         }
     }
 
-    void FinishObjective()
+    protected virtual void FinishObjective()
     {
         if (nextObjective != null)
         {

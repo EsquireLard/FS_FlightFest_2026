@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1461833552800553350}
-  - component: {fileID: 4608896049641068323}
   - component: {fileID: 1933884601366840249}
   - component: {fileID: 8276649422177842747}
   m_Layer: 0
@@ -148,20 +147,6 @@ Transform:
   - {fileID: 4532100452130185401}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4608896049641068323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6857980903786841168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e155b8cd83ab01d4887cf1ebc0efa1f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_Control
-  rotateSpeed: 1
-  flySpeed: 1
 --- !u!54 &1933884601366840249
 Rigidbody:
   m_ObjectHideFlags: 0

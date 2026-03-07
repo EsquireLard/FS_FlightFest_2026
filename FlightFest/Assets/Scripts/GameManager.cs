@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public float timeScaleOrig;
 
     GameObject player;
-    Player_Control playerScript;
+    FlightController playerScript;
 
     [Header("===Menus===")]
     [SerializeField] GameObject menuActive;
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         timeScaleOrig = Time.timeScale;
 
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<Player_Control>();
+        playerScript = player.GetComponent<FlightController>();
         //objectiveSlider.value = 0.1f;
     }
 

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 8734374456877368802}
   - component: {fileID: 7003525139152526008}
   - component: {fileID: 3644611458919814570}
+  - component: {fileID: -3713605014663650674}
   - component: {fileID: 3769330377373693866}
   - component: {fileID: -3841964568092877259}
-  - component: {fileID: 3576083365705740966}
   m_Layer: 0
   m_Name: FinalMarker
   m_TagString: Untagged
@@ -93,6 +93,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-3713605014663650674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2544226023865870790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e96cbb88f8b7c49a8b157b006eec3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FinalMarker
+  objectiveTime: 0
+  objectivePopup: 
+  nextObjective: {fileID: 0}
 --- !u!135 &3769330377373693866
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -135,18 +150,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3576083365705740966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2544226023865870790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfe69976726f34240bec84bf105ffa84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Objective
-  objectiveTime: 0.01
-  objectivePopup: 
-  nextObjective: {fileID: 0}
