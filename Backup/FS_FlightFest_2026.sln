@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FlightFest", "FlightFest", "{96446D81-3B13-BC48-9602-308A88E98803}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "FlightFest\Assembly-CSharp-Editor.csproj", "{CDB673DF-AD40-37A2-5928-521681CE2748}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "FlightFest\Assembly-CSharp.csproj", "{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDB673DF-AD40-37A2-5928-521681CE2748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDB673DF-AD40-37A2-5928-521681CE2748}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDB673DF-AD40-37A2-5928-521681CE2748}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDB673DF-AD40-37A2-5928-521681CE2748}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDB673DF-AD40-37A2-5928-521681CE2748} = {96446D81-3B13-BC48-9602-308A88E98803}
+		{5AF62050-DB7F-7FF0-1378-4F47D88EB8FA} = {96446D81-3B13-BC48-9602-308A88E98803}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8FB772A5-F1A0-48ED-87B1-E942F158856C}
+	EndGlobalSection
+EndGlobal
